@@ -205,7 +205,30 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
 }
 
 bool SyntaxAnalyzer::ifstmt(){
-	return true;
+	if (tokitr != tokens.end() && *tokitr == "s_lparen"){
+        tokitr++; lexitr++;
+		if(expr()){
+			if (tokitr != tokens.end() && *tokitr == "s_rparen"){
+		        tokitr++; lexitr++;
+				if (tokitr != tokens.end() && *tokitr == "t_then"){
+					if(stmtlist()){
+						if (tokitr != tokens.end() && *tokitr == "t_then"){
+							if(elsepart()){
+								if(tokitr != tokens.end() && *tokitr == "t_end"){
+							        tokitr++; lexitr++;
+									if (tokitr != tokens.end() && *tokitr == "t_if"){
+										tokitr++; lexitr++;
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
     // we will write this together in class
 }
 
@@ -250,17 +273,17 @@ bool SyntaxAnalyzer::outputstmt(){
 
 bool SyntaxAnalyzer::expr(){
     if (simpleexpr()){
-	if (logicop()){
-		if (simpleexpr())
-			return true;
+		if (logicop()){
+			if (simpleexpr())
+				return true;
+			else
+				return false;
+		}
 		else
-			return false;
-	}
-	else
-		return true;
+			return true;
     }
     else{
-	return false;
+    	return false;
     }
 }
 
