@@ -246,14 +246,14 @@ bool SyntaxAnalyzer::elsepart(){
     return true;   // elsepart can be null
 }
 
-bool SyntaxAnalyzer::whilestmt(){
+bool SyntaxAnalyzer::whilestmt(){////////////////////
 	return true;
-	// write this function
+	// write this function - John Wolf
 }
 
-bool SyntaxAnalyzer::assignstmt(){
+bool SyntaxAnalyzer::assignstmt(){///////////////////
 	return true;
-    // write this function
+    // write this function - Brandon Wallace
 }
 bool SyntaxAnalyzer::inputstmt(){
     if (*tokitr == "s_lparen"){
@@ -269,9 +269,9 @@ bool SyntaxAnalyzer::inputstmt(){
     return false;
 }
 
-bool SyntaxAnalyzer::outputstmt(){
+bool SyntaxAnalyzer::outputstmt(){///////////////////
 	return true;
-	// write this function
+	// write this function - Brandon Wallace
 }
 
 bool SyntaxAnalyzer::expr(){
@@ -290,9 +290,9 @@ bool SyntaxAnalyzer::expr(){
     }
 }
 
-bool SyntaxAnalyzer::simpleexpr(){
+bool SyntaxAnalyzer::simpleexpr(){////////////////////
 	return true;
-    // write this function
+    // write this function - John Wolf
 }
 
 bool SyntaxAnalyzer::term(){
