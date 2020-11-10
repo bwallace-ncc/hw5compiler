@@ -234,7 +234,6 @@ bool SyntaxAnalyzer::ifstmt(){
 	return false;
     // we will write this together in class
 }
-
 bool SyntaxAnalyzer::elsepart(){
     if (*tokitr == "t_else"){
         tokitr++; lexitr++;
@@ -268,12 +267,10 @@ bool SyntaxAnalyzer::inputstmt(){
     }
     return false;
 }
-
 bool SyntaxAnalyzer::outputstmt(){
 	return true;
 	// write this function
 }
-
 bool SyntaxAnalyzer::expr(){
     if (simpleexpr()){
 		if (logicop()){
@@ -288,13 +285,10 @@ bool SyntaxAnalyzer::expr(){
     else{
     	return false;
     }
-}
-
 bool SyntaxAnalyzer::simpleexpr(){
 	return true;
     // write this function
 }
-
 bool SyntaxAnalyzer::term(){
     if ((*tokitr == "t_int")
 	|| (*tokitr == "t_str")
@@ -313,7 +307,6 @@ bool SyntaxAnalyzer::term(){
         }
     return false;
 }
-
 bool SyntaxAnalyzer::logicop(){
     if ((*tokitr == "s_and") || (*tokitr == "s_or")){
         tokitr++; lexitr++;
