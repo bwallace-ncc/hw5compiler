@@ -1,6 +1,10 @@
-/*
- * Test -- making new branch
- */
+/*======================================================================================================================================================================
+ * Homework 5 - Compiler Part 2 (Syntax Checker)
+ * John Wolf and Brandon Wallace
+ * CSCE 306
+ * Dr. St.Clair
+ * 11/9/20
+ *====================================================================================================================================================================*/
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -245,10 +249,41 @@ bool SyntaxAnalyzer::elsepart(){
     }
     return true;   // elsepart can be null
 }
-
-bool SyntaxAnalyzer::whilestmt(){////////////////////
-	return true;
-	// write this function - John Wolf
+/*
+ * John Wolf
+ *
+ * pre: grammar calls for a while statment
+ * post: gives boolean determining if pointer is pointing at a syntactically correct while statment
+ *
+ * @param: null
+ * @return: bool isWhileStmt
+ */
+bool SyntaxAnalyzer::whilestmt()
+{
+	if(tokitr != tokens.end() && *tokitr == "t_while")
+	{
+		tokitr++; lexitr++;
+		if(expr())
+		{
+			if(tokitr != tokens.end() && *tokitr == "t_loop")
+			{
+				tokitr++; lexitr++;
+				if(stmtlist())
+				{
+					if(tokitr != tokens.end() && *tokitr == "t_end")
+					{
+						tokitr++; lexitr++;
+						if(tokitr != tokens.end() && *tokitr == "t_loop")
+						{
+							tokitr++; lexitr++;
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool SyntaxAnalyzer::assignstmt(){///////////////////
@@ -289,12 +324,30 @@ bool SyntaxAnalyzer::expr(){
     	return false;
     }
 }
-
-bool SyntaxAnalyzer::simpleexpr(){////////////////////
-	return true;
-    // write this function - John Wolf
+/*
+ * John Wolf
+ *
+ * pre: grammar calls for a simple expression
+ * post: gives boolean determining if pointer is pointing at a syntactically correct simple expression
+ *
+ * @param: null;
+ * @return bool isSimpleExpression
+ */
+bool SyntaxAnalyzer::simpleexpr()
+{
+	if(term())
+	{
+		if(arithop())
+		{
+			if(term()) {return true;}
+		}
+		else if(relop())
+		{
+			if(term()) {return true;}
+		}
+	}
+	return false;
 }
-
 bool SyntaxAnalyzer::term(){
     if ((*tokitr == "t_int")
 	|| (*tokitr == "t_str")
@@ -359,10 +412,12 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 
     return input;
 }
-
-int main(){
+int main()
+{
     ifstream infile("codelexemes.txt");
-    if (!infile){
+    string whloopFn = "while_test.txt"; // used for testing while loop tokens
+    if (!infile)
+    {
     	cout << "error opening lexemes.txt file" << endl;
         exit(-1);
     }
