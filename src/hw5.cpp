@@ -300,14 +300,16 @@ bool SyntaxAnalyzer::whilestmt()
 	if(tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
 		tokitr++; lexitr++;
-		if(expr()){
+		if(expr())
+		{
 			if(tokitr != tokens.end() && *tokitr == "s_rparen")
 			{
 				tokitr++; lexitr++;
 				if(tokitr != tokens.end() && *tokitr == "t_loop")
 				{
 					tokitr++; lexitr++;
-					if(stmtlist()){
+					if(stmtlist())
+					{
 						if(tokitr != tokens.end() && *tokitr == "t_end")
 						{
 							tokitr++; lexitr++;
@@ -417,31 +419,41 @@ bool SyntaxAnalyzer::simpleexpr()
 		if(arithop())
 		{
 			if(term()) {return true;}
+			return false;
 		}
 		else if(relop())
 		{
 			if(term()) {return true;}
+			return false;
 		}
 		else {return true;}
 	}
 	return false;
 }
-bool SyntaxAnalyzer::term(){
+bool SyntaxAnalyzer::term()
+{
     if ((*tokitr == "t_int")
 	|| (*tokitr == "t_str")
-	|| (*tokitr == "t_id")){
+	|| (*tokitr == "t_id"))
+    {
     	tokitr++; lexitr++;
     	return true;
     }
     else
-        if (*tokitr == "s_lparen"){
-            tokitr++; lexitr++;
-            if (expr())
-                if (*tokitr == "s_rparen"){
-                    tokitr++; lexitr++;
-                    return true;
-                }
-        }
+    {
+    	if (*tokitr == "s_lparen")
+    	{
+    		tokitr++; lexitr++;
+    		if (expr())
+    		{
+    			if (*tokitr == "s_rparen")
+    			{
+					tokitr++; lexitr++;
+					return true;
+				}
+    		}
+    	}
+    }
     return false;
 }
 
@@ -490,9 +502,11 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 
     return input;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //======================================================================================================================================================================
 // Test methods
 //======================================================================================================================================================================
+
 /*
  * This is identical to SyntaxAnalyzer::parse(), but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
  *
@@ -527,10 +541,11 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
     else {ss << "bad var list";}
     ss << "\nWhere failed:\n"+to_string(tokitr-tokens.begin()+1)+" tokitr: "+*tokitr+"\n"+to_string(lexitr-lexemes.begin()+1)+" lexitr: "+*lexitr+"\n------------------------\n\n";
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*======================================================================================================================================================================
- * this is a forward reference for all of the test methods below main:
+ * this is a forward reference for the test methods below main:
  *====================================================================================================================================================================*/
 void runTest();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,11 +556,12 @@ void runTest();
 int main()
 {
 	// true to enable runTest()
-	bool testMode = true;
+	bool testMode = false;
 	if(testMode) {runTest();}
 
 
     ifstream infile("codelexemes.txt");
+	//ifstream infile("while_test.txt");
     if (!infile)
     {
     	cout << "error opening lexemes.txt file" << endl;
@@ -568,7 +584,7 @@ void runTest()
 {
 	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 0; // change number to index of the file name you want to run. You can add them above
+	int infileNumber = 1; // change number to index of the file name you want to run. You can add them above
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);
