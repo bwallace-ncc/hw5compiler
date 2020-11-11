@@ -11,7 +11,11 @@
 #include <vector>
 #include <map>
 #include <string>
+//===============================================
+//These are for testing, delete before turning in
 #include <sstream>
+#include <ctime>
+//===============================================
 using namespace std;
 
 //======================================================================================================================================================================
@@ -229,21 +233,28 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
 }
 
 bool SyntaxAnalyzer::ifstmt(){
-	if (tokitr != tokens.end() && *tokitr == "s_lparen"){
+	if (tokitr != tokens.end() && *tokitr == "s_lparen")
+	{
         tokitr++; lexitr++;
-		if(expr()){
-			if (tokitr != tokens.end() && *tokitr == "s_rparen"){
+		if(expr())
+		{
+			if (tokitr != tokens.end() && *tokitr == "s_rparen")
+			{
 		        tokitr++; lexitr++;
-				if (tokitr != tokens.end() && *tokitr == "t_then"){
-					if(stmtlist()){
-						if (tokitr != tokens.end() && *tokitr == "t_then"){
-							if(elsepart()){
-								if(tokitr != tokens.end() && *tokitr == "t_end"){
-							        tokitr++; lexitr++;
-									if (tokitr != tokens.end() && *tokitr == "t_if"){
-										tokitr++; lexitr++;
-										return true;
-									}
+				if (tokitr != tokens.end() && *tokitr == "t_then")
+				{
+					tokitr++; lexitr++;
+					if(stmtlist())
+					{
+						if(elsepart())
+						{
+							if(tokitr != tokens.end() && *tokitr == "t_end")
+							{
+								tokitr++; lexitr++;
+								if (tokitr != tokens.end() && *tokitr == "t_if")
+								{
+									tokitr++; lexitr++;
+									return true;
 								}
 							}
 						}
@@ -277,23 +288,28 @@ bool SyntaxAnalyzer::elsepart(){
  */
 bool SyntaxAnalyzer::whilestmt()
 {
-	if(tokitr != tokens.end() && *tokitr == "t_while")
+	tokitr++; lexitr++;
+	if(tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
 		tokitr++; lexitr++;
 		if(expr())
 		{
-			if(tokitr != tokens.end() && *tokitr == "t_loop")
+			if(tokitr != tokens.end() && *tokitr == "s_rparen")
 			{
 				tokitr++; lexitr++;
-				if(stmtlist())
+				if(tokitr != tokens.end() && *tokitr == "t_loop")
 				{
-					if(tokitr != tokens.end() && *tokitr == "t_end")
+					tokitr++; lexitr++;
+					if(stmtlist())
 					{
-						tokitr++; lexitr++;
-						if(tokitr != tokens.end() && *tokitr == "t_loop")
+						if(tokitr != tokens.end() && *tokitr == "t_end")
 						{
 							tokitr++; lexitr++;
-							return true;
+							if(tokitr != tokens.end() && *tokitr == "t_loop")
+							{
+								tokitr++; lexitr++;
+								return true;
+							}
 						}
 					}
 				}
@@ -360,6 +376,7 @@ bool SyntaxAnalyzer::simpleexpr()
 		{
 			if(term()) {return true;}
 		}
+		else {return true;}
 	}
 	return false;
 }
@@ -427,11 +444,13 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 
     return input;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //======================================================================================================================================================================
 // Test methods
 //======================================================================================================================================================================
+
 /*
- * This is identical to parse, but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
+ * This is identical to SyntaxAnalyzer::parse(), but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
  *
  * @params: stringstream& ss - reference to a string stream object
  * @returns: null
@@ -462,12 +481,13 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
         else {ss << "no main";}
     }
     else {ss << "bad var list";}
-    ss << "\nWhere failed: tokitr: "+*tokitr+", lexitr: "+*lexitr+"\n------------------------\n\n";
+    ss << "\nWhere failed:\n"+to_string(tokitr-tokens.begin()+1)+" tokitr: "+*tokitr+"\n"+to_string(lexitr-lexemes.begin()+1)+" lexitr: "+*lexitr+"\n------------------------\n\n";
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*======================================================================================================================================================================
- * this is a forward reference for all of the test methods below main:
+ * this is a forward reference for the test methods below main:
  *====================================================================================================================================================================*/
 void runTest();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -505,7 +525,7 @@ void runTest()
 {
 	string inputfns[] = {"while_test.txt", "codelexemes.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 0; // change number to index of the file name you want to run. You can add them above
+	int infileNumber = 1; // change number to index of the file name you want to run. You can add them above
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);
@@ -517,14 +537,11 @@ void runTest()
 	string output = ss.str();
 	int outfileNumber = 0;
 	string outfn = outputfns[outfileNumber];
-	file.open(outfn, ios::out | ios::app);
-	if(!file)
-	{
-		file.close();
-		file.open(outfn, ios::out);
-		file << output << endl << endl;
-	}
-	else {file << output << endl;}
+	file.open(outfn, ios::out);
+	int found = 0;
+	if(file) {found = 1;}
+	file << output << endl;
+	if(!found) {file << endl;}
 	file.close();
 	exit(0);
 }

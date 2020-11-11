@@ -1,9 +1,10 @@
-
-while_test.txt
+codelexemes.txt
 =====================
 
 bad/no stmtlist
-Where failed: tokitr: t_then, lexitr: then
+Where failed:
+20 tokitr: r_rparen
+20 lexitr: )
 ------------------------
 
 

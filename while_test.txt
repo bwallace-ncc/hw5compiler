@@ -25,6 +25,11 @@ t_id:y
 s_rparen:)
 t_end:end
 t_if:if
+t_if:if
+s_lparen:(
+t_id:x
+s_rparen:)
+t_then:then
 t_while:while
 s_lparen:(
 t_id:x
@@ -32,7 +37,6 @@ s_lt:<
 t_id:y
 s_rparen:)
 t_loop:loop
-t_id:x
 t_id:y
 s_plus:+
 t_int:1

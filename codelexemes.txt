@@ -14,7 +14,7 @@ s_gt:>
 t_int:5
 s_rparen:)
 t_then:then
-t_intput:input
+t_input:input
 s_lparen:(
 t_id:x
 r_rparen:)
