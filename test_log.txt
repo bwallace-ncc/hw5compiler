@@ -3,8 +3,8 @@ codelexemes.txt
 
 bad/no stmtlist
 Where failed:
-20 tokitr: r_rparen
-20 lexitr: )
+15 tokitr: s_rparen
+15 lexitr: )
 ------------------------
 
 
