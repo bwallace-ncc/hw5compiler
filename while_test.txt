@@ -37,9 +37,12 @@ s_lt:<
 t_id:y
 s_rparen:)
 t_loop:loop
+t_input:input
+s_lparen:(
 t_id:y
-s_plus:+
-t_int:1
+s_rparen:)
 t_end:end
 t_loop:loop
+t_end:end
+t_if:if
 t_end:end

@@ -487,8 +487,8 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
                 	if (*tokitr == "t_end")
                 	{
                 		tokitr++; lexitr++;
-                		if (tokitr==tokens.end()) {ss << "Valid source code file";}  // end was last thing in file
-                		else {ss << "end came too early";}
+                		if (tokitr==tokens.end()) {cout << "eof" << endl; ss << "Valid source code file"; return;}  // end was last thing in file
+                		else {cout << "!eof?" << endl; ss << "end came too early";}
                 	}
                 	else {ss << "invalid statement ending code";}
                 }
@@ -521,6 +521,7 @@ int main()
 
 
     ifstream infile("codelexemes.txt");
+	//ifstream infile("while_test.txt");
     if (!infile)
     {
     	cout << "error opening lexemes.txt file" << endl;

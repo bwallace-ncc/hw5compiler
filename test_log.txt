@@ -1,10 +1,4 @@
 codelexemes.txt
 =====================
 
-bad/no stmtlist
-Where failed:
-15 tokitr: s_rparen
-15 lexitr: )
-------------------------
-
-
+Valid source code file
