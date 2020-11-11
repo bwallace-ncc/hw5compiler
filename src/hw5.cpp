@@ -11,8 +11,22 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <sstream>
 using namespace std;
 
+//======================================================================================================================================================================
+/*
+ * I have this space here for notes and the like. Also, above main is a section for putting in methods to test the program. That way they're all in one spot
+ * when we go to delete them before turning this in
+ *
+ * Notes:
+ *
+ * Issues:
+ *
+ * To do:
+ *
+ */
+//======================================================================================================================================================================
 class SyntaxAnalyzer{
     private:
         vector<string> lexemes;
@@ -55,6 +69,9 @@ class SyntaxAnalyzer{
         // If an error occurs, a message prints indicating the token/lexeme pair
         // that caused the error.  If no error occurs, the symboltable contains all
         // variables and datatypes.
+
+        //for testing
+        void runTest(stringstream&);
 };
 SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
     string line, tok, lex;
@@ -309,20 +326,18 @@ bool SyntaxAnalyzer::outputstmt(){///////////////////
 	// write this function - Brandon Wallace
 }
 
-bool SyntaxAnalyzer::expr(){
-    if (simpleexpr()){
-		if (logicop()){
-			if (simpleexpr())
-				return true;
-			else
-				return false;
+bool SyntaxAnalyzer::expr()
+{
+    if (simpleexpr())
+    {
+		if (logicop())
+		{
+			if (simpleexpr()) {return true;}
+			else {return false;}
 		}
-		else
-			return true;
+		else {return true;}
     }
-    else{
-    	return false;
-    }
+    else {return false;}
 }
 /*
  * John Wolf
@@ -412,10 +427,62 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 
     return input;
 }
+//======================================================================================================================================================================
+// Test methods
+//======================================================================================================================================================================
+/*
+ * This is identical to parse, but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
+ *
+ * @params: stringstream& ss - reference to a string stream object
+ * @returns: null
+ */
+void SyntaxAnalyzer::runTest(stringstream& ss)
+{
+    if (vdec())
+    {
+        if (tokitr!=tokens.end() && *tokitr=="t_main")
+        {
+            tokitr++; lexitr++;
+            if (tokitr!=tokens.end() && stmtlist())
+            {
+            	if (tokitr!=tokens.end()) // should be at end token
+            	{
+                	if (*tokitr == "t_end")
+                	{
+                		tokitr++; lexitr++;
+                		if (tokitr==tokens.end()) {ss << "Valid source code file";}  // end was last thing in file
+                		else {ss << "end came too early";}
+                	}
+                	else {ss << "invalid statement ending code";}
+                }
+                else {ss << "no end";}
+            }
+            else {ss << "bad/no stmtlist";}
+        }
+        else {ss << "no main";}
+    }
+    else {ss << "bad var list";}
+    ss << "\nWhere failed: tokitr: "+*tokitr+", lexitr: "+*lexitr+"\n------------------------\n\n";
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*======================================================================================================================================================================
+ * this is a forward reference for all of the test methods below main:
+ *====================================================================================================================================================================*/
+void runTest();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 int main()
 {
+	// true to enable runTest()
+	bool testMode = true;
+	if(testMode) {runTest();}
+
+
     ifstream infile("codelexemes.txt");
-    string whloopFn = "while_test.txt"; // used for testing while loop tokens
     if (!infile)
     {
     	cout << "error opening lexemes.txt file" << endl;
@@ -425,3 +492,58 @@ int main()
     sa.parse();
     return 1;
 }
+
+
+
+
+
+
+//======================================================================================================================================================================
+// Test functions
+//======================================================================================================================================================================
+void runTest()
+{
+	string inputfns[] = {"while_test.txt", "codelexemes.txt"};
+	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
+	int infileNumber = 0; // change number to index of the file name you want to run. You can add them above
+	string infn = inputfns[infileNumber], logfn = "test_log.txt";
+	fstream file;
+	file.open(infn, ios::in);
+	SyntaxAnalyzer sa(file);
+	file.close();
+	stringstream ss;
+	ss << infn+"\n=====================\n\n";
+	sa.runTest(ss);
+	string output = ss.str();
+	int outfileNumber = 0;
+	string outfn = outputfns[outfileNumber];
+	file.open(outfn, ios::out | ios::app);
+	if(!file)
+	{
+		file.close();
+		file.open(outfn, ios::out);
+		file << output << endl << endl;
+	}
+	else {file << output << endl;}
+	file.close();
+	exit(0);
+}
+//======================================================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
