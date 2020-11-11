@@ -233,18 +233,35 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
 }
 
 bool SyntaxAnalyzer::ifstmt(){
-	if (tokitr != tokens.end() && *tokitr == "s_lparen"){
+	cout << "in ifstmt" << endl;
+	if (tokitr != tokens.end() && *tokitr == "s_lparen")
+	{
         tokitr++; lexitr++;
-		if(expr()){
-			if (tokitr != tokens.end() && *tokitr == "s_rparen"){
+        cout << "lparen" << endl;
+		if(expr())
+		{
+			cout << "expr" << endl;
+			if (tokitr != tokens.end() && *tokitr == "s_rparen")
+			{
+				cout << "rparen" << endl;
 		        tokitr++; lexitr++;
-				if (tokitr != tokens.end() && *tokitr == "t_then"){
+				if (tokitr != tokens.end() && *tokitr == "t_then")
+				{
+					cout << "then" << endl;
 					tokitr++; lexitr++;
-					if(stmtlist()){
-						if(elsepart()){
-							if(tokitr != tokens.end() && *tokitr == "t_end"){
+					if(stmtlist())
+					{
+						cout << "stmtlist" << endl;
+						if(elsepart())
+						{
+							cout << "else" << endl;
+							if(tokitr != tokens.end() && *tokitr == "t_end")
+							{
+								cout << "end" << endl;
 								tokitr++; lexitr++;
-								if (tokitr != tokens.end() && *tokitr == "t_if"){
+								if (tokitr != tokens.end() && *tokitr == "t_if")
+								{
+									cout << "if" << endl;
 									tokitr++; lexitr++;
 									return true;
 								}
@@ -280,7 +297,6 @@ bool SyntaxAnalyzer::elsepart(){
  */
 bool SyntaxAnalyzer::whilestmt()
 {
-	tokitr++; lexitr++;
 	if(tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
 		tokitr++; lexitr++;
@@ -334,11 +350,11 @@ bool SyntaxAnalyzer::assignstmt(){
 	return false;
 }
 bool SyntaxAnalyzer::inputstmt(){
-    if (*tokitr == "s_lparen"){
+    if (tokitr != tokens.end() && *tokitr == "s_lparen"){
         tokitr++; lexitr++;
-        if (*tokitr == "t_id"){
+        if (tokitr != tokens.end() && *tokitr == "t_id"){
             tokitr++; lexitr++;
-            if (*tokitr == "s_rparen"){
+            if (tokitr != tokens.end() && *tokitr == "s_rparen"){
                 tokitr++; lexitr++;
                 return true;
             }
@@ -497,8 +513,8 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
                 	if (*tokitr == "t_end")
                 	{
                 		tokitr++; lexitr++;
-                		if (tokitr==tokens.end()) {ss << "Valid source code file";}  // end was last thing in file
-                		else {ss << "end came too early";}
+                		if (tokitr==tokens.end()) {cout << "eof" << endl; ss << "Valid source code file"; return;}  // end was last thing in file
+                		else {cout << "!eof?" << endl; ss << "end came too early";}
                 	}
                 	else {ss << "invalid statement ending code";}
                 }
@@ -552,7 +568,7 @@ void runTest()
 {
 	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 3; // change number to index of the file name you want to run. You can add them above
+	int infileNumber = 0; // change number to index of the file name you want to run. You can add them above
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);

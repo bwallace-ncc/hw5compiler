@@ -1,10 +1,4 @@
-while_test.txt
+codelexemes.txt
 =====================
 
-bad/no stmtlist
-Where failed:
-30 tokitr: t_id
-30 lexitr: x
-------------------------
-
-
+Valid source code file
