@@ -25,4 +25,7 @@ t_id:y
 s_rparen:)
 t_end:end
 t_if:if
+t_id:x
+s_gt:=
+t_int:5
 t_end:end

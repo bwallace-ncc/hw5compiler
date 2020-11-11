@@ -11,7 +11,11 @@
 #include <vector>
 #include <map>
 #include <string>
+//===============================================
+//These are for testing, delete before turning in
 #include <sstream>
+#include <ctime>
+//===============================================
 using namespace std;
 
 //======================================================================================================================================================================
@@ -235,15 +239,14 @@ bool SyntaxAnalyzer::ifstmt(){
 			if (tokitr != tokens.end() && *tokitr == "s_rparen"){
 		        tokitr++; lexitr++;
 				if (tokitr != tokens.end() && *tokitr == "t_then"){
+					tokitr++; lexitr++;
 					if(stmtlist()){
-						if (tokitr != tokens.end() && *tokitr == "t_then"){
-							if(elsepart()){
-								if(tokitr != tokens.end() && *tokitr == "t_end"){
-							        tokitr++; lexitr++;
-									if (tokitr != tokens.end() && *tokitr == "t_if"){
-										tokitr++; lexitr++;
-										return true;
-									}
+						if(elsepart()){
+							if(tokitr != tokens.end() && *tokitr == "t_end"){
+								tokitr++; lexitr++;
+								if (tokitr != tokens.end() && *tokitr == "t_if"){
+									tokitr++; lexitr++;
+									return true;
 								}
 							}
 						}
@@ -269,31 +272,34 @@ bool SyntaxAnalyzer::elsepart(){
 /*
  * John Wolf
  *
- * pre: grammar calls for a while statment
- * post: gives boolean determining if pointer is pointing at a syntactically correct while statment
+ * pre: grammar calls for a while statement
+ * post: gives boolean determining if pointer is pointing at a syntactically correct while statement
  *
  * @param: null
  * @return: bool isWhileStmt
  */
 bool SyntaxAnalyzer::whilestmt()
 {
-	if(tokitr != tokens.end() && *tokitr == "t_while")
+	tokitr++; lexitr++;
+	if(tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
 		tokitr++; lexitr++;
-		if(expr())
-		{
-			if(tokitr != tokens.end() && *tokitr == "t_loop")
+		if(expr()){
+			if(tokitr != tokens.end() && *tokitr == "s_rparen")
 			{
 				tokitr++; lexitr++;
-				if(stmtlist())
+				if(tokitr != tokens.end() && *tokitr == "t_loop")
 				{
-					if(tokitr != tokens.end() && *tokitr == "t_end")
-					{
-						tokitr++; lexitr++;
-						if(tokitr != tokens.end() && *tokitr == "t_loop")
+					tokitr++; lexitr++;
+					if(stmtlist()){
+						if(tokitr != tokens.end() && *tokitr == "t_end")
 						{
 							tokitr++; lexitr++;
-							return true;
+							if(tokitr != tokens.end() && *tokitr == "t_loop")
+							{
+								tokitr++; lexitr++;
+								return true;
+							}
 						}
 					}
 				}
@@ -303,9 +309,29 @@ bool SyntaxAnalyzer::whilestmt()
 	return false;
 }
 
-bool SyntaxAnalyzer::assignstmt(){///////////////////
-	return true;
-    // write this function - Brandon Wallace
+/*
+ * Brandon Wallace
+ *
+ * pre: grammar calls for an assignment statement
+ * post: gives boolean determining if pointer is pointing at a syntactically correct assignment statement
+ *
+ * @param: null
+ * @return: bool isAssignStmt
+ */
+bool SyntaxAnalyzer::assignstmt(){
+	if(tokitr != tokens.end() && *tokitr == "t_id"){
+		tokitr++; lexitr++;
+		if(tokitr != tokens.end() && *tokitr == "s_assign"){
+			tokitr++; lexitr++;
+			if(expr()){
+				if(tokitr != tokens.end() && *tokitr == "s_semi"){
+					tokitr++; lexitr++;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 bool SyntaxAnalyzer::inputstmt(){
     if (*tokitr == "s_lparen"){
@@ -321,9 +347,29 @@ bool SyntaxAnalyzer::inputstmt(){
     return false;
 }
 
+/*
+ * Brandon Wallace
+ *
+ * pre: grammar calls for an output statement
+ * post: gives boolean determining if pointer is pointing at a syntactically correct output statement
+ *
+ * @param: null
+ * @return: bool isOutputStmt
+ */
 bool SyntaxAnalyzer::outputstmt(){///////////////////
+	if(tokitr != tokens.end() && *tokitr == "t_output"){
+		tokitr++; lexitr++;
+		if(expr()){
+			tokitr++; lexitr++;
+			return true;
+		}
+		else if(tokitr != tokens.end() && *tokitr == "t_string"){
+			tokitr++; lexitr++;
+			return true;
+		}
+	}
 	return true;
-	// write this function - Brandon Wallace
+
 }
 
 bool SyntaxAnalyzer::expr()
@@ -360,6 +406,7 @@ bool SyntaxAnalyzer::simpleexpr()
 		{
 			if(term()) {return true;}
 		}
+		else {return true;}
 	}
 	return false;
 }
@@ -431,7 +478,7 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 // Test methods
 //======================================================================================================================================================================
 /*
- * This is identical to parse, but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
+ * This is identical to SyntaxAnalyzer::parse(), but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
  *
  * @params: stringstream& ss - reference to a string stream object
  * @returns: null
@@ -462,7 +509,7 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
         else {ss << "no main";}
     }
     else {ss << "bad var list";}
-    ss << "\nWhere failed: tokitr: "+*tokitr+", lexitr: "+*lexitr+"\n------------------------\n\n";
+    ss << "\nWhere failed:\n"+to_string(tokitr-tokens.begin()+1)+" tokitr: "+*tokitr+"\n"+to_string(lexitr-lexemes.begin()+1)+" lexitr: "+*lexitr+"\n------------------------\n\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -503,9 +550,9 @@ int main()
 //======================================================================================================================================================================
 void runTest()
 {
-	string inputfns[] = {"while_test.txt", "codelexemes.txt"};
+	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 0; // change number to index of the file name you want to run. You can add them above
+	int infileNumber = 3; // change number to index of the file name you want to run. You can add them above
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);
@@ -517,22 +564,15 @@ void runTest()
 	string output = ss.str();
 	int outfileNumber = 0;
 	string outfn = outputfns[outfileNumber];
-	file.open(outfn, ios::out | ios::app);
-	if(!file)
-	{
-		file.close();
-		file.open(outfn, ios::out);
-		file << output << endl << endl;
-	}
-	else {file << output << endl;}
+	file.open(outfn, ios::out);
+	int found = 0;
+	if(file) {found = 1;}
+	file << output << endl;
+	if(!found) {file << endl;}
 	file.close();
 	exit(0);
 }
 //======================================================================================================================================================================
-
-
-
-
 
 
 

@@ -1,9 +1,10 @@
-
 while_test.txt
 =====================
 
 bad/no stmtlist
-Where failed: tokitr: t_then, lexitr: then
+Where failed:
+30 tokitr: t_id
+30 lexitr: x
 ------------------------
 
 
