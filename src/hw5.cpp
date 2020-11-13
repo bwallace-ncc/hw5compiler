@@ -527,7 +527,7 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
                 	if (*tokitr == "t_end")
                 	{
                 		tokitr++; lexitr++;
-                		if (tokitr==tokens.end()) {cout << "eof" << endl; ss << "Valid source code file"; return;}  // end was last thing in file
+                		if (tokitr==tokens.end()) {cout << "eof" << endl; ss << "Valid source code file\n"; return;}  // end was last thing in file
                 		else {cout << "!eof?" << endl; ss << "end came too early";}
                 	}
                 	else {ss << "invalid statement ending code";}
@@ -548,6 +548,7 @@ void SyntaxAnalyzer::runTest(stringstream& ss)
  * this is a forward reference for the test methods below main:
  *====================================================================================================================================================================*/
 void runTest();
+void runNTests(string, string);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -556,8 +557,33 @@ void runTest();
 int main()
 {
 	// true to enable runTest()
-	bool testMode = false;
-	if(testMode) {runTest();}
+	bool testMode = true;
+	if(testMode)
+	{
+		string input = "";
+		while(input == "" || input != "3")
+		{
+			cout << "1: Run single test" << endl << "2: Run multiple tests (requires file names)" << endl << "3: Exit" << endl;
+			cout << "==================" << endl << "Enter selection: ";
+			getline(cin, input);
+			cout << endl;
+			if(input == "1") {runTest();}
+			else if(input == "2")
+			{
+				cout << "Enter input fn: ";
+				getline(cin, input);
+				cout << endl;
+				string infile = input;
+				cout << "Enter output fn: ";
+				getline(cin, input);
+				string outfile = input;
+				cout << endl;
+				runNTests(infile, outfile);
+			}
+			else if(input == "3") {cout << "exiting" << endl;}
+			else {cout << "Not valid response" << endl;}
+		}
+	}
 
 
     ifstream infile("codelexemes.txt");
@@ -580,6 +606,12 @@ int main()
 //======================================================================================================================================================================
 // Test functions
 //======================================================================================================================================================================
+/*
+ * pre: call when testing a single data file
+ * post: stringstream writes results of test to file
+ *
+ * @return null
+ */
 void runTest()
 {
 	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
@@ -603,6 +635,54 @@ void runTest()
 	if(!found) {file << endl;}
 	file.close();
 	exit(0);
+}
+/*
+ * pre: call when running >1 test
+ * post: stringstream writes results of tests to file
+ *
+ * @param infn: file name of file containing the names of each file to be tested. One file name per line
+ * @param outfn: file name of file to write results of tests to
+ * @return null
+ */
+void runNTests(string infn, string outfn)
+{
+	fstream file;
+	file.open(infn, ios::in);
+	if(!file) {cout << "File " << infn << " was not found" << endl; exit(-2);}
+	else
+	{
+		string input;
+		vector<string*> filenames;
+		while(getline(file, input)) {filenames.push_back(new string(input));}
+		file.close();
+		int len = filenames.size();
+		stringstream ss;
+		ss << "Test count: " << len+1 << endl << "=============================" << endl << endl;
+		for(int i = 0; i < len; i++)
+		{
+			string _fn = *filenames[i];
+			ss << "Test: " << i+1 << ": " << _fn << endl << "------------------------------" << endl;
+			file.open(_fn, ios::in);
+			if(file)
+			{
+				cout << "n test loop, file found" << endl;
+				SyntaxAnalyzer sa(file);
+				file.close();
+				sa.runTest(ss);
+			}
+			else {file.close(); ss << "File " << _fn << " was not found" << endl;}
+			ss << "-----------------------------" << endl << endl;
+		}
+		string output = ss.str();
+		int nFile = 0;
+		file.open(outfn, ios::out);
+		if(!file) {nFile = 1;}
+		file << output << endl;
+		if(nFile) {file << endl;}
+		file.close();
+		for(int i = 0; i < len; i++) {delete(filenames[i]);}
+		exit(0);
+	}
 }
 //======================================================================================================================================================================
 

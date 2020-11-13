@@ -1,0 +1,34 @@
+Test count: 5
+=============================
+
+Test: 1: assign_test.txt
+------------------------------
+bad/no stmtlist
+Where failed:
+29 tokitr: s_gt
+29 lexitr: =
+------------------------
+
+-----------------------------
+
+Test: 2: codelexemes.txt
+------------------------------
+Valid source code file
+-----------------------------
+
+Test: 3: output_test.txt
+------------------------------
+bad/no stmtlist
+Where failed:
+30 tokitr: s_gt
+30 lexitr: >
+------------------------
+
+-----------------------------
+
+Test: 4: while_test.txt
+------------------------------
+Valid source code file
+-----------------------------
+
+
