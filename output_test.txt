@@ -27,6 +27,4 @@ t_end:end
 t_if:if
 t_output:output
 t_id:x
-s_gt:>
-t_int:5
 t_end:end

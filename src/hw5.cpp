@@ -214,7 +214,6 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
     }
     else if (*tokitr == "t_id"){  // assignment starts with identifier
         tokitr++; lexitr++;
-        cout << "t_id" << endl;
         if (assignstmt()) return 1;
         else return 0;
     }
@@ -233,7 +232,6 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
 }
 
 bool SyntaxAnalyzer::ifstmt(){
-	cout << "in ifstmt" << endl;
 	if (tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
         tokitr++; lexitr++;
@@ -337,15 +335,12 @@ bool SyntaxAnalyzer::whilestmt()
  * @return: bool isAssignStmt
  */
 bool SyntaxAnalyzer::assignstmt(){
-	if(tokitr != tokens.end() && *tokitr == "t_id"){
+	if(tokitr != tokens.end() && *tokitr == "s_assign"){
 		tokitr++; lexitr++;
-		if(tokitr != tokens.end() && *tokitr == "s_assign"){
-			tokitr++; lexitr++;
-			if(expr()){
-				if(tokitr != tokens.end() && *tokitr == "s_semi"){
-					tokitr++; lexitr++;
-					return true;
-				}
+		if(expr()){
+			if(tokitr != tokens.end() && *tokitr == "s_semi"){
+				tokitr++; lexitr++;
+				return true;
 			}
 		}
 	}
@@ -375,19 +370,14 @@ bool SyntaxAnalyzer::inputstmt(){
  * @return: bool isOutputStmt
  */
 bool SyntaxAnalyzer::outputstmt(){///////////////////
-	if(tokitr != tokens.end() && *tokitr == "t_output"){
-		tokitr++; lexitr++;
-		if(expr()){
-			tokitr++; lexitr++;
-			return true;
-		}
-		else if(tokitr != tokens.end() && *tokitr == "t_string"){
-			tokitr++; lexitr++;
-			return true;
-		}
+	if(expr()){
+		return true;
 	}
-	return true;
-
+	else if(tokitr != tokens.end() && *tokitr == "t_string"){
+		tokitr++; lexitr++;
+		return true;
+	}
+	return false;
 }
 
 bool SyntaxAnalyzer::expr()
@@ -560,7 +550,7 @@ int main()
 	if(testMode) {runTest();}
 
 
-    ifstream infile("codelexemes.txt");
+    ifstream infile("output_test.txt");
 	//ifstream infile("while_test.txt");
     if (!infile)
     {
@@ -584,7 +574,7 @@ void runTest()
 {
 	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 1; // change number to index of the file name you want to run. You can add them above
+	int infileNumber = 3; // change number to index of the file name you want to run. You can add them above
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);
