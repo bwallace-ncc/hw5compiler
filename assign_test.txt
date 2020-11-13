@@ -26,6 +26,7 @@ s_rparen:)
 t_end:end
 t_if:if
 t_id:x
-s_gt:=
+s_assign:=
 t_int:5
+s_semi:;
 t_end:end
