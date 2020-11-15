@@ -1,0 +1,15 @@
+t_main:main
+t_if:if
+s_lparen:(
+t_int:5
+s_eq:==
+t_id:x
+s_rparen:)
+t_then:then
+t_input:input
+s_lparen:(
+t_id:z
+s_rparen:)
+t_end:end
+t_if:if
+t_end:end

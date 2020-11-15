@@ -24,11 +24,12 @@ using namespace std;
  * when we go to delete them before turning this in
  *
  * Notes:
+ *  -I think it just falls down to testing with bigger test files and seeing if anything fails. It seems to be working pretty well and we just need to test for holes
  *
  * Issues:
  *
  * To do:
- *
+ * -Write a more robust test method/file?
  */
 //======================================================================================================================================================================
 class SyntaxAnalyzer{
@@ -247,12 +248,13 @@ bool SyntaxAnalyzer::ifstmt(){
 				{
 					cout << "then" << endl;
 					tokitr++; lexitr++;
+					cout << "next token: " << *tokitr << endl;
 					if(stmtlist())
 					{
 						cout << "stmtlist" << endl;
 						if(elsepart())
 						{
-							cout << "else" << endl;
+							cout << "else " << *tokitr << endl;
 							if(tokitr != tokens.end() && *tokitr == "t_end")
 							{
 								cout << "end" << endl;
@@ -604,9 +606,16 @@ int main()
  */
 void runTest()
 {
-	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt"};
+	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt", "test_file.txt"};
 	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber = 3; // change number to index of the file name you want to run. You can add them above
+	int infileNumber; // change number to index of the file name you want to run. You can add them above
+	int inlen = *(&inputfns+1) - inputfns;
+	for(int i = 0; i < inlen; i++) {cout << i+1 << ": " << inputfns[i] << endl;}
+	cout << "=============" << endl << "Select file to use: ";
+	string input;
+	getline(cin, input);
+	cout << endl;
+	infileNumber = stoi(input)-1;
 	string infn = inputfns[infileNumber], logfn = "test_log.txt";
 	fstream file;
 	file.open(infn, ios::in);
