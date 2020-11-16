@@ -11,11 +11,6 @@
 #include <vector>
 #include <map>
 #include <string>
-//===============================================
-//These are for testing, delete before turning in
-#include <sstream>
-#include <ctime>
-//===============================================
 using namespace std;
 
 //======================================================================================================================================================================
@@ -136,7 +131,7 @@ bool SyntaxAnalyzer::parse(){
 
 bool SyntaxAnalyzer::vdec(){
 
-    if (*tokitr != "t_var")
+    if (tokitr!=tokens.end() && *tokitr != "t_var")
         return true;
     else{
         tokitr++; lexitr++;
@@ -159,11 +154,11 @@ bool SyntaxAnalyzer::vdec(){
 int SyntaxAnalyzer::vars(){
     int result = 0;  // 0 - valid, 1 - done, 2 - error
     string temp;
-    if (*tokitr == "t_integer"){
+    if (tokitr!=tokens.end() && *tokitr == "t_integer"){
         temp = "t_integer";
         tokitr++; lexitr++;
     }
-    else if (*tokitr == "t_string"){
+    else if (tokitr!=tokens.end() && *tokitr == "t_string"){
         temp = "t_string";
         tokitr++; lexitr++;
     }
@@ -203,27 +198,27 @@ bool SyntaxAnalyzer::stmtlist(){
         return true;
 }
 int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
-	if (*tokitr == "t_if"){
+	if (tokitr!=tokens.end() && *tokitr == "t_if"){
         tokitr++; lexitr++;
         if (ifstmt()) return 1;
         else return 0;
     }
-    else if (*tokitr == "t_while"){
+    else if (tokitr!=tokens.end() && *tokitr == "t_while"){
         tokitr++; lexitr++;
         if (whilestmt()) return 1;
         else return 0;
     }
-    else if (*tokitr == "t_id"){  // assignment starts with identifier
+    else if (tokitr!=tokens.end() && *tokitr == "t_id"){  // assignment starts with identifier
         tokitr++; lexitr++;
         if (assignstmt()) return 1;
         else return 0;
     }
-    else if (*tokitr == "t_input"){
+    else if (tokitr!=tokens.end() && *tokitr == "t_input"){
         tokitr++; lexitr++;
         if (inputstmt()) return 1;
         else return 0;
     }
-    else if (*tokitr == "t_output"){
+    else if (tokitr!=tokens.end() && *tokitr == "t_output"){
         tokitr++; lexitr++;
         cout << "t_output" << endl;
         if (outputstmt()) return 1;
@@ -277,7 +272,7 @@ bool SyntaxAnalyzer::ifstmt(){
 }
 
 bool SyntaxAnalyzer::elsepart(){
-    if (*tokitr == "t_else"){
+    if (tokitr!=tokens.end() && *tokitr == "t_else"){
         tokitr++; lexitr++;
         if (stmtlist())
             return true;
@@ -433,12 +428,12 @@ bool SyntaxAnalyzer::term()
     }
     else
     {
-    	if (*tokitr == "s_lparen")
+    	if (tokitr!=tokens.end() && *tokitr == "s_lparen")
     	{
     		tokitr++; lexitr++;
     		if (expr())
     		{
-    			if (*tokitr == "s_rparen")
+    			if (tokitr!=tokens.end() && *tokitr == "s_rparen")
     			{
 					tokitr++; lexitr++;
 					return true;
@@ -494,91 +489,10 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 
     return input;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//======================================================================================================================================================================
-// Test methods
-//======================================================================================================================================================================
-
-/*
- * This is identical to SyntaxAnalyzer::parse(), but uses a stringstream instead of cout. That way if you run >1 test at a time, it can print to a test log to be read
- *
- * @params: stringstream& ss - reference to a string stream object
- * @returns: null
- */
-void SyntaxAnalyzer::runTest(stringstream& ss)
-{
-    if (vdec())
-    {
-        if (tokitr!=tokens.end() && *tokitr=="t_main")
-        {
-            tokitr++; lexitr++;
-            if (tokitr!=tokens.end() && stmtlist())
-            {
-            	if (tokitr!=tokens.end()) // should be at end token
-            	{
-                	if (*tokitr == "t_end")
-                	{
-                		tokitr++; lexitr++;
-                		if (tokitr==tokens.end()) {cout << "eof" << endl; ss << "Valid source code file\n"; return;}  // end was last thing in file
-                		else {cout << "!eof?" << endl; ss << "end came too early";}
-                	}
-                	else {ss << "invalid statement ending code";}
-                }
-                else {ss << "no end";}
-            }
-            else {ss << "bad/no stmtlist";}
-        }
-        else {ss << "no main";}
-    }
-    else {ss << "bad var list";}
-    ss << "\nWhere failed:\n"+to_string(tokitr-tokens.begin()+1)+" tokitr: "+*tokitr+"\n"+to_string(lexitr-lexemes.begin()+1)+" lexitr: "+*lexitr+"\n------------------------\n\n";
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*======================================================================================================================================================================
- * this is a forward reference for the test methods below main:
- *====================================================================================================================================================================*/
-void runTest();
-void runNTests(string, string);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 int main()
 {
-	// true to enable runTest()
-	bool testMode = true;
-	if(testMode)
-	{
-		string input = "";
-		while(input == "" || input != "3")
-		{
-			cout << "1: Run single test" << endl << "2: Run multiple tests (requires file names)" << endl << "3: Exit" << endl;
-			cout << "==================" << endl << "Enter selection: ";
-			getline(cin, input);
-			cout << endl;
-			if(input == "1") {runTest();}
-			else if(input == "2")
-			{
-				cout << "Enter input fn: ";
-				getline(cin, input);
-				cout << endl;
-				string infile = input;
-				cout << "Enter output fn: ";
-				getline(cin, input);
-				string outfile = input;
-				cout << endl;
-				runNTests(infile, outfile);
-			}
-			else if(input == "3") {cout << "exiting" << endl;}
-			else {cout << "Not valid response" << endl;}
-		}
-	}
-
-
-    ifstream infile("output_test.txt");
+    ifstream infile("codelexemes.txt");
 	//ifstream infile("while_test.txt");
     if (!infile)
     {
@@ -589,112 +503,3 @@ int main()
     sa.parse();
     return 1;
 }
-
-
-
-
-
-
-//======================================================================================================================================================================
-// Test functions
-//======================================================================================================================================================================
-/*
- * pre: call when testing a single data file
- * post: stringstream writes results of test to file
- *
- * @return null
- */
-void runTest()
-{
-	string inputfns[] = {"while_test.txt", "assign_test.txt", "output_test.txt", "codelexemes.txt", "test_file.txt"};
-	string outputfns[] = {"test_log.txt"}; // you can add more if you want to
-	int infileNumber; // change number to index of the file name you want to run. You can add them above
-	int inlen = *(&inputfns+1) - inputfns;
-	for(int i = 0; i < inlen; i++) {cout << i+1 << ": " << inputfns[i] << endl;}
-	cout << "=============" << endl << "Select file to use: ";
-	string input;
-	getline(cin, input);
-	cout << endl;
-	infileNumber = stoi(input)-1;
-	string infn = inputfns[infileNumber], logfn = "test_log.txt";
-	fstream file;
-	file.open(infn, ios::in);
-	SyntaxAnalyzer sa(file);
-	file.close();
-	stringstream ss;
-	ss << infn+"\n=====================\n\n";
-	sa.runTest(ss);
-	string output = ss.str();
-	int outfileNumber = 0;
-	string outfn = outputfns[outfileNumber];
-	file.open(outfn, ios::out);
-	int found = 0;
-	if(file) {found = 1;}
-	file << output << endl;
-	if(!found) {file << endl;}
-	file.close();
-	exit(0);
-}
-/*
- * pre: call when running >1 test
- * post: stringstream writes results of tests to file
- *
- * @param infn: file name of file containing the names of each file to be tested. One file name per line
- * @param outfn: file name of file to write results of tests to
- * @return null
- */
-void runNTests(string infn, string outfn)
-{
-	fstream file;
-	file.open(infn, ios::in);
-	if(!file) {cout << "File " << infn << " was not found" << endl; exit(-2);}
-	else
-	{
-		string input;
-		vector<string*> filenames;
-		while(getline(file, input)) {filenames.push_back(new string(input));}
-		file.close();
-		int len = filenames.size();
-		stringstream ss;
-		ss << "Test count: " << len+1 << endl << "=============================" << endl << endl;
-		for(int i = 0; i < len; i++)
-		{
-			string _fn = *filenames[i];
-			ss << "Test: " << i+1 << ": " << _fn << endl << "------------------------------" << endl;
-			file.open(_fn, ios::in);
-			if(file)
-			{
-				cout << "n test loop, file found" << endl;
-				SyntaxAnalyzer sa(file);
-				file.close();
-				sa.runTest(ss);
-			}
-			else {file.close(); ss << "File " << _fn << " was not found" << endl;}
-			ss << "-----------------------------" << endl << endl;
-		}
-		string output = ss.str();
-		int nFile = 0;
-		file.open(outfn, ios::out);
-		if(!file) {nFile = 1;}
-		file << output << endl;
-		if(nFile) {file << endl;}
-		file.close();
-		for(int i = 0; i < len; i++) {delete(filenames[i]);}
-		exit(0);
-	}
-}
-//======================================================================================================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
