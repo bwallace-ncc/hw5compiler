@@ -220,43 +220,43 @@ int SyntaxAnalyzer::stmt(){  // returns 1 or 2 if valid, 0 if invalid
     }
     else if (tokitr!=tokens.end() && *tokitr == "t_output"){
         tokitr++; lexitr++;
-        cout << "t_output" << endl;
         if (outputstmt()) return 1;
         else return 0;
     }
     return 2;  //stmtlist can be null
 }
 
+/*
+ * John Wolf
+ * Brandon Wallace
+ *
+ * pre: grammar calls for a if statement
+ * post: gives boolean determining if pointer is pointing at a syntactically correct if statement
+ *
+ * @param: null
+ * @return: bool isIfStmt
+ */
 bool SyntaxAnalyzer::ifstmt(){
 	if (tokitr != tokens.end() && *tokitr == "s_lparen")
 	{
-        tokitr++; lexitr++;
-        cout << "lparen" << endl;
-		if(expr())
+		tokitr++; lexitr++;
+		if (expr())
 		{
-			cout << "expr" << endl;
 			if (tokitr != tokens.end() && *tokitr == "s_rparen")
 			{
-				cout << "rparen" << endl;
-		        tokitr++; lexitr++;
+				tokitr++; lexitr++;
 				if (tokitr != tokens.end() && *tokitr == "t_then")
 				{
-					cout << "then" << endl;
 					tokitr++; lexitr++;
-					cout << "next token: " << *tokitr << endl;
-					if(stmtlist())
+					if (stmtlist())
 					{
-						cout << "stmtlist" << endl;
-						if(elsepart())
+						if (elsepart())
 						{
-							cout << "else " << *tokitr << endl;
-							if(tokitr != tokens.end() && *tokitr == "t_end")
+							if (tokitr != tokens.end() && *tokitr == "t_end")
 							{
-								cout << "end" << endl;
 								tokitr++; lexitr++;
 								if (tokitr != tokens.end() && *tokitr == "t_if")
 								{
-									cout << "if" << endl;
 									tokitr++; lexitr++;
 									return true;
 								}
@@ -268,7 +268,7 @@ bool SyntaxAnalyzer::ifstmt(){
 		}
 	}
 	return false;
-    // we will write this together in class
+	// we will write this together in class
 }
 
 bool SyntaxAnalyzer::elsepart(){
@@ -366,7 +366,7 @@ bool SyntaxAnalyzer::inputstmt(){
  * @param: null
  * @return: bool isOutputStmt
  */
-bool SyntaxAnalyzer::outputstmt(){///////////////////
+bool SyntaxAnalyzer::outputstmt(){
 	if(expr()){
 		return true;
 	}
@@ -493,7 +493,6 @@ std::istream& SyntaxAnalyzer::getline_safe(std::istream& input, std::string& out
 int main()
 {
     ifstream infile("codelexemes.txt");
-	//ifstream infile("while_test.txt");
     if (!infile)
     {
     	cout << "error opening lexemes.txt file" << endl;
