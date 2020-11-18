@@ -13,20 +13,6 @@
 #include <string>
 using namespace std;
 
-//======================================================================================================================================================================
-/*
- * I have this space here for notes and the like. Also, above main is a section for putting in methods to test the program. That way they're all in one spot
- * when we go to delete them before turning this in
- *
- * Notes:
- *  -I think it just falls down to testing with bigger test files and seeing if anything fails. It seems to be working pretty well and we just need to test for holes
- *
- * Issues:
- *
- * To do:
- * -Write a more robust test method/file?
- */
-//======================================================================================================================================================================
 class SyntaxAnalyzer{
     private:
         vector<string> lexemes;
